@@ -17,6 +17,7 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	defer ws.Close()
 	entity.Clients[ws] = true
 

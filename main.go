@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/BrunoPolaski/go-chat-app/src/handler"
-	"github.com/BrunoPolaski/go-chat-app/src/routes"
+	"github.com/BrunoPolaski/go-chat-app/src/controller/handler"
+	"github.com/BrunoPolaski/go-chat-app/src/controller/routes"
 )
 
 func main() {

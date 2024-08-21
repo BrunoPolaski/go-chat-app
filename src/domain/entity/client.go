@@ -1,5 +1,10 @@
 package entity
 
-import "github.com/gorilla/websocket"
+import (
+	"github.com/gorilla/websocket"
+)
 
-var Clients = make(map[*websocket.Conn]bool)
+type Client struct {
+	ID   string
+	Conn *websocket.Conn
+}
