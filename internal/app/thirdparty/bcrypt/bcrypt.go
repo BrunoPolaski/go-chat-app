@@ -1,4 +1,4 @@
-package thirdparty
+package bcrypt
 
 type Bcrypt interface {
 	GenerateFromPassword(password []byte, cost int) ([]byte, error)
