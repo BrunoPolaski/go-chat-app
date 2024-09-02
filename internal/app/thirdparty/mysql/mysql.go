@@ -7,6 +7,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+var database *sql.DB
+var dbConn *sql.Conn
+
 func Init() {
 	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/chat")
 	if err != nil {
@@ -20,17 +23,18 @@ func Init() {
 	}
 
 	db.Exec("CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255), password VARCHAR(255))")
+
+	database = db
 }
 
-func GetConnection() *sql.Conn {
-	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/chat")
-	if err != nil {
-		panic(err.Error())
+func GetConn() *sql.Conn {
+	if dbConn == nil {
+		conn, err := database.Conn(context.Background())
+		if err != nil {
+			panic(err.Error())
+		}
+		dbConn = conn
 	}
 
-	if conn, err := db.Conn(context.Background()); err != nil {
-		panic(err.Error())
-	} else {
-		return conn
-	}
+	return dbConn
 }
