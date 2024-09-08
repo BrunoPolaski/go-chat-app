@@ -1,12 +1,24 @@
 package entity
 
-import "sync"
+import (
+	"net/http"
+	"sync"
+
+	"github.com/gorilla/websocket"
+)
 
 type Server struct {
-	clients map[string]*Client
-	mutex   sync.Mutex
+	Clients map[string]*Client
+	Mutex   sync.Mutex
 }
 
 var ServerInstance = &Server{
-	clients: make(map[string]*Client),
+	Clients: make(map[string]*Client),
+	Mutex:   sync.Mutex{},
+}
+
+var Upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
 }
