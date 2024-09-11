@@ -1,8 +1,24 @@
 package jwt
 
-import "github.com/golang-jwt/jwt/v5"
+import (
+	"os"
 
-type JWT interface {
-	GenerateToken(claims jwt.Claims) (string, error)
-	ParseToken(tokenString string, claims jwt.Claims) error
+	"github.com/golang-jwt/jwt/v5"
+)
+
+type JWTAdapter struct{}
+
+func (ja *JWTAdapter) GenerateToken(payload jwt.Claims) (string, error) {
+	k := os.Getenv("JWT_SECRET")
+	t := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
+	token, err := t.SignedString([]byte(k))
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
+}
+
+func (ja *JWTAdapter) ParseToken() {
+	// TODO: Implement this method
 }
