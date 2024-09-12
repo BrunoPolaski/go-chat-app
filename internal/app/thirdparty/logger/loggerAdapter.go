@@ -8,11 +8,11 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var (
-	log *zap.Logger
-)
+type zapLogger struct {
+	Logger *zap.Logger
+}
 
-func init() {
+func (zl *zapLogger) init() {
 	logConfig := zap.Config{
 		OutputPaths: []string{getOutputLogs()},
 		Level:       zap.NewAtomicLevelAt(getLevelLogs()),
@@ -27,21 +27,21 @@ func init() {
 		},
 	}
 
-	log, _ = logConfig.Build()
+	zl.Logger, _ = logConfig.Build()
 }
 
-func Info(message string, tags ...zap.Field) {
-	log.Info(message, tags...)
-	log.Sync()
+func (zl *zapLogger) Info(message string, tags ...zap.Field) {
+	zl.Logger.Info(message, tags...)
+	zl.Logger.Sync()
 }
 
-func Error(message string, err error, tags ...zap.Field) {
+func (zl *zapLogger) Error(message string, err error, tags ...zap.Field) {
 	tags = append(tags, zap.NamedError("error", err))
-	log.Error(message, tags...)
-	log.Sync()
+	zl.Logger.Error(message, tags...)
+	zl.Logger.Sync()
 }
 
-func getOutputLogs() string {
+func (zl *zapLogger) getOutputLogs() string {
 	output := strings.ToLower(strings.TrimSpace(os.Getenv("LOG_OUTPUT")))
 	if output == "" {
 		return "stdout"
@@ -50,7 +50,7 @@ func getOutputLogs() string {
 	return output
 }
 
-func getLevelLogs() zapcore.Level {
+func (zl *zapLogger) getLevelLogs() zapcore.Level {
 	switch strings.ToLower(strings.TrimSpace(os.Getenv("LOG_LEVEL"))) {
 	case "info":
 		return zapcore.InfoLevel

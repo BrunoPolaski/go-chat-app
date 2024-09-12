@@ -12,6 +12,6 @@ func Init(r *gin.RouterGroup) {
 	http.HandleFunc("/ws", handler.HandleConnections)
 	authentication := r.Group("/auth")
 	{
-		authentication.POST("/login", auth.Login)
+		authentication.POST("/login", auth.LoginController)
 	}
 }
