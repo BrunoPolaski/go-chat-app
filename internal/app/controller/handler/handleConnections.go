@@ -3,14 +3,19 @@ package handler
 import (
 	"net/http"
 
-	"github.com/BrunoPolaski/go-chat-app/internal/app/thirdparty/logger"
+	"github.com/BrunoPolaski/go-chat-app/internal/app/thirdparty/contract"
 	"github.com/BrunoPolaski/go-chat-app/internal/domain/entity"
 )
 
-func HandleConnections(w http.ResponseWriter, r *http.Request) {
+type HandleConnections struct {
+	loggerAdapter  contract.LoggerContract
+	handleMessages HandleMessages
+}
+
+func (hc *HandleConnections) HandleConnections(w http.ResponseWriter, r *http.Request) {
 	conn, err := entity.Upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		logger.Error("Could not upgrade connection", err)
+		hc.loggerAdapter.Error("Could not upgrade connection", err)
 		return
 	}
 
@@ -37,7 +42,7 @@ func HandleConnections(w http.ResponseWriter, r *http.Request) {
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
-			logger.Error("Could not read message", err)
+			hc.loggerAdapter.Error("Could not read message", err)
 			break
 		}
 

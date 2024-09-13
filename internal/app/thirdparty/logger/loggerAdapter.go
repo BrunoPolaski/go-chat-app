@@ -8,14 +8,14 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-type zapLogger struct {
+type LoggerAdapter struct {
 	Logger *zap.Logger
 }
 
-func (zl *zapLogger) init() {
+func (la *LoggerAdapter) init() {
 	logConfig := zap.Config{
-		OutputPaths: []string{getOutputLogs()},
-		Level:       zap.NewAtomicLevelAt(getLevelLogs()),
+		OutputPaths: []string{la.getOutputLogs()},
+		Level:       zap.NewAtomicLevelAt(la.getLevelLogs()),
 		Encoding:    "json",
 		EncoderConfig: zapcore.EncoderConfig{
 			LevelKey:     "level",
@@ -27,30 +27,35 @@ func (zl *zapLogger) init() {
 		},
 	}
 
-	zl.Logger, _ = logConfig.Build()
+	var err error
+	la.Logger, err = logConfig.Build()
+	if err != nil {
+		panic(err)
+	}
 }
 
-func (zl *zapLogger) Info(message string, tags ...zap.Field) {
-	zl.Logger.Info(message, tags...)
-	zl.Logger.Sync()
+func (la *LoggerAdapter) Info(message string, tags ...zap.Field) {
+	la.Logger.Info(message, tags...)
+	la.Logger.Sync()
 }
 
-func (zl *zapLogger) Error(message string, err error, tags ...zap.Field) {
+func (la *LoggerAdapter) Error(message string, err error, tags ...zap.Field) {
 	tags = append(tags, zap.NamedError("error", err))
-	zl.Logger.Error(message, tags...)
-	zl.Logger.Sync()
+	la.Logger.Error(message, tags...)
+	la.Logger.Sync()
 }
 
-func (zl *zapLogger) getOutputLogs() string {
+func (la *LoggerAdapter) getOutputLogs() string {
 	output := strings.ToLower(strings.TrimSpace(os.Getenv("LOG_OUTPUT")))
 	if output == "" {
+		la.Logger.Warn("No log output provided, defaulting to stdout")
 		return "stdout"
 	}
 
 	return output
 }
 
-func (zl *zapLogger) getLevelLogs() zapcore.Level {
+func (la *LoggerAdapter) getLevelLogs() zapcore.Level {
 	switch strings.ToLower(strings.TrimSpace(os.Getenv("LOG_LEVEL"))) {
 	case "info":
 		return zapcore.InfoLevel
@@ -59,6 +64,7 @@ func (zl *zapLogger) getLevelLogs() zapcore.Level {
 	case "debug":
 		return zapcore.DebugLevel
 	default:
+		la.Logger.Warn("Invalid log level, defaulting to InfoLevel", zap.String("provided_level", os.Getenv("LOG_LEVEL")))
 		return zapcore.InfoLevel
 	}
 }
