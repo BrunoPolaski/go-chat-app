@@ -3,13 +3,17 @@ package handler
 import (
 	"fmt"
 
-	"github.com/BrunoPolaski/go-chat-app/internal/app/thirdparty/logger"
+	"github.com/BrunoPolaski/go-chat-app/internal/app/thirdparty/contract"
 	"github.com/BrunoPolaski/go-chat-app/internal/domain/entity"
 	"github.com/gorilla/websocket"
 )
 
 type HandleMessages struct {
-	loggerAdapter logger.LoggerAdapter
+	logger contract.LoggerContract
+}
+
+func NewHandleMessages(logger contract.LoggerContract) HandleMessages {
+	return HandleMessages{logger: logger}
 }
 
 func (hm *HandleMessages) handle(senderID, message string) {
@@ -20,7 +24,7 @@ func (hm *HandleMessages) handle(senderID, message string) {
 		if id != senderID {
 			err := client.Conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("%s: %s", senderID, message)))
 			if err != nil {
-				hm.loggerAdapter.Error(fmt.Sprintf("Could not send message to %s", id), err)
+				hm.logger.Error(fmt.Sprintf("Could not send message to %s", id), err)
 			}
 		}
 	}

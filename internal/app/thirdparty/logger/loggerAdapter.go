@@ -9,7 +9,13 @@ import (
 )
 
 type LoggerAdapter struct {
-	Logger *zap.Logger
+	logger *zap.Logger
+}
+
+func NewLoggerAdapter() *LoggerAdapter {
+	logger := &LoggerAdapter{logger: &zap.Logger{}}
+	logger.init()
+	return logger
 }
 
 func (la *LoggerAdapter) init() {
@@ -28,27 +34,27 @@ func (la *LoggerAdapter) init() {
 	}
 
 	var err error
-	la.Logger, err = logConfig.Build()
+	la.logger, err = logConfig.Build()
 	if err != nil {
 		panic(err)
 	}
 }
 
 func (la *LoggerAdapter) Info(message string, tags ...zap.Field) {
-	la.Logger.Info(message, tags...)
-	la.Logger.Sync()
+	la.logger.Info(message, tags...)
+	la.logger.Sync()
 }
 
 func (la *LoggerAdapter) Error(message string, err error, tags ...zap.Field) {
 	tags = append(tags, zap.NamedError("error", err))
-	la.Logger.Error(message, tags...)
-	la.Logger.Sync()
+	la.logger.Error(message, tags...)
+	la.logger.Sync()
 }
 
 func (la *LoggerAdapter) getOutputLogs() string {
 	output := strings.ToLower(strings.TrimSpace(os.Getenv("LOG_OUTPUT")))
 	if output == "" {
-		la.Logger.Warn("No log output provided, defaulting to stdout")
+		la.logger.Warn("No log output provided, defaulting to stdout")
 		return "stdout"
 	}
 
@@ -64,7 +70,7 @@ func (la *LoggerAdapter) getLevelLogs() zapcore.Level {
 	case "debug":
 		return zapcore.DebugLevel
 	default:
-		la.Logger.Warn("Invalid log level, defaulting to InfoLevel", zap.String("provided_level", os.Getenv("LOG_LEVEL")))
+		la.logger.Warn("Invalid log level, defaulting to InfoLevel", zap.String("provided_level", os.Getenv("LOG_LEVEL")))
 		return zapcore.InfoLevel
 	}
 }

@@ -8,14 +8,21 @@ import (
 )
 
 type HandleConnections struct {
-	loggerAdapter  contract.LoggerContract
+	logger         contract.LoggerContract
 	handleMessages HandleMessages
 }
 
-func (hc *HandleConnections) HandleConnections(w http.ResponseWriter, r *http.Request) {
+func NewHandleConnections(logger contract.LoggerContract, handleMessages HandleMessages) HandleConnections {
+	return HandleConnections{
+		logger:         logger,
+		handleMessages: handleMessages,
+	}
+}
+
+func (hc *HandleConnections) Handle(w http.ResponseWriter, r *http.Request) {
 	conn, err := entity.Upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		hc.loggerAdapter.Error("Could not upgrade connection", err)
+		hc.logger.Error("Could not upgrade connection", err)
 		return
 	}
 
@@ -42,10 +49,10 @@ func (hc *HandleConnections) HandleConnections(w http.ResponseWriter, r *http.Re
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
-			hc.loggerAdapter.Error("Could not read message", err)
+			hc.logger.Error("Could not read message", err)
 			break
 		}
 
-		HandleMessages(client.ID, string(message))
+		hc.handleMessages.handle(client.ID, string(message))
 	}
 }
