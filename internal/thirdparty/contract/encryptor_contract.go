@@ -1,6 +1,6 @@
-package bcrypt
+package contract
 
-type Bcrypt interface {
+type EncryptorContract interface {
 	GenerateFromPassword(password []byte, cost int) ([]byte, error)
 	CompareHashAndPassword(hashedPassword, password []byte) error
 }
