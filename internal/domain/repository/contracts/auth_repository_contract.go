@@ -1,5 +1,7 @@
 package contracts
 
+import "github.com/BrunoPolaski/go-chat-app/internal/domain/entity"
+
 type AuthRepositoryContract interface {
-	FindUser(username, password string) (bool, error)
+	SignUp(user entity.User) error
 }

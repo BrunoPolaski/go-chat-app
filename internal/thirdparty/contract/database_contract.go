@@ -1,6 +1,8 @@
 package contract
 
+import "database/sql"
+
 type DatabaseContract interface {
-	Connect() error
+	Connect() (*sql.DB, error)
 	Disconnect() error
 }
