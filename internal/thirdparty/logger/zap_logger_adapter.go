@@ -8,17 +8,17 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-type LoggerAdapter struct {
+type ZapLoggerAdapter struct {
 	logger *zap.Logger
 }
 
-func NewLoggerAdapter() *LoggerAdapter {
-	logger := &LoggerAdapter{logger: &zap.Logger{}}
+func NewZapLoggerAdapter() *ZapLoggerAdapter {
+	logger := &ZapLoggerAdapter{logger: &zap.Logger{}}
 	logger.init()
 	return logger
 }
 
-func (la *LoggerAdapter) init() {
+func (la *ZapLoggerAdapter) init() {
 	logConfig := zap.Config{
 		OutputPaths: []string{la.getOutputLogs()},
 		Level:       zap.NewAtomicLevelAt(la.getLevelLogs()),
@@ -40,18 +40,17 @@ func (la *LoggerAdapter) init() {
 	}
 }
 
-func (la *LoggerAdapter) Info(message string, tags ...zap.Field) {
-	la.logger.Info(message, tags...)
+func (la *ZapLoggerAdapter) Info(message string) {
+	la.logger.Info(message)
 	la.logger.Sync()
 }
 
-func (la *LoggerAdapter) Error(message string, err error, tags ...zap.Field) {
-	tags = append(tags, zap.NamedError("error", err))
-	la.logger.Error(message, tags...)
+func (la *ZapLoggerAdapter) Error(message string) {
+	la.logger.Error(message)
 	la.logger.Sync()
 }
 
-func (la *LoggerAdapter) getOutputLogs() string {
+func (la *ZapLoggerAdapter) getOutputLogs() string {
 	output := strings.ToLower(strings.TrimSpace(os.Getenv("LOG_OUTPUT")))
 	if output == "" {
 		la.logger.Warn("No log output provided, defaulting to stdout")
@@ -61,7 +60,7 @@ func (la *LoggerAdapter) getOutputLogs() string {
 	return output
 }
 
-func (la *LoggerAdapter) getLevelLogs() zapcore.Level {
+func (la *ZapLoggerAdapter) getLevelLogs() zapcore.Level {
 	switch strings.ToLower(strings.TrimSpace(os.Getenv("LOG_LEVEL"))) {
 	case "info":
 		return zapcore.InfoLevel

@@ -3,14 +3,13 @@ package api
 import (
 	"net/http"
 
-	"github.com/BrunoPolaski/go-chat-app/internal/app/controller/auth"
-	"github.com/BrunoPolaski/go-chat-app/internal/app/controller/handler"
-	"github.com/BrunoPolaski/go-chat-app/internal/app/thirdparty/logger"
+	auth "github.com/BrunoPolaski/go-chat-app/internal/controller"
+	"github.com/BrunoPolaski/go-chat-app/internal/controller/handler"
+	"github.com/BrunoPolaski/go-chat-app/internal/thirdparty/contract"
 	"github.com/gin-gonic/gin"
 )
 
-func Init(r *gin.RouterGroup) {
-	logger := logger.NewLoggerAdapter()
+func Init(r *gin.RouterGroup, logger contract.LoggerContract) {
 	handleMessages := handler.NewHandleMessages(logger)
 	handleConnections := handler.NewHandleConnections(
 		logger,
@@ -19,6 +18,7 @@ func Init(r *gin.RouterGroup) {
 	http.HandleFunc("/ws", handleConnections.Handle)
 	authentication := r.Group("/auth")
 	{
-		authentication.POST("/login", auth.LoginController)
+		authController := auth.AuthController{}
+		authentication.POST("/login", auth.AuthController.SignIn)
 	}
 }

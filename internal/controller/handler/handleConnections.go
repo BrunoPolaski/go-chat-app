@@ -1,10 +1,11 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
-	"github.com/BrunoPolaski/go-chat-app/internal/app/thirdparty/contract"
 	"github.com/BrunoPolaski/go-chat-app/internal/domain/entity"
+	"github.com/BrunoPolaski/go-chat-app/internal/thirdparty/contract"
 )
 
 type HandleConnections struct {
@@ -22,7 +23,7 @@ func NewHandleConnections(logger contract.LoggerContract, handleMessages HandleM
 func (hc *HandleConnections) Handle(w http.ResponseWriter, r *http.Request) {
 	conn, err := entity.Upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		hc.logger.Error("Could not upgrade connection", err)
+		hc.logger.Error(fmt.Sprintf("Could not upgrade connection, error: %v", err))
 		return
 	}
 
@@ -49,7 +50,7 @@ func (hc *HandleConnections) Handle(w http.ResponseWriter, r *http.Request) {
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
-			hc.logger.Error("Could not read message", err)
+			hc.logger.Error(fmt.Sprintf("Could not read message, error: %v", err))
 			break
 		}
 
