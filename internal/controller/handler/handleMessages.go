@@ -3,16 +3,16 @@ package handler
 import (
 	"fmt"
 
-	"github.com/BrunoPolaski/go-chat-app/internal/domain/entity"
-	"github.com/BrunoPolaski/go-chat-app/internal/thirdparty/contract"
+	entity "github.com/BrunoPolaski/go-chat-app/internal/domain/entity/http"
+	"github.com/BrunoPolaski/go-chat-app/internal/infra/thirdparty/thirdparty_contract"
 	"github.com/gorilla/websocket"
 )
 
 type HandleMessages struct {
-	logger contract.LoggerContract
+	logger thirdparty_contract.LoggerContract
 }
 
-func NewHandleMessages(logger contract.LoggerContract) HandleMessages {
+func NewHandleMessages(logger thirdparty_contract.LoggerContract) HandleMessages {
 	return HandleMessages{logger: logger}
 }
 

@@ -2,21 +2,23 @@ package repository
 
 import (
 	"github.com/BrunoPolaski/go-chat-app/internal/domain/entity"
-	"github.com/BrunoPolaski/go-chat-app/internal/dto"
-	"github.com/BrunoPolaski/go-chat-app/internal/thirdparty/contract"
+	"github.com/BrunoPolaski/go-chat-app/internal/domain/entity/dto"
+	"github.com/BrunoPolaski/go-chat-app/internal/infra/thirdparty/thirdparty_contract"
 	"github.com/BrunoPolaski/go-chat-app/pkg/utility"
 )
 
-type AuthRepository struct {
-	database contract.DatabaseContract
+type authRepository struct {
+	database thirdparty_contract.DatabaseContract
 }
 
-func NewAuthRepository(database contract.DatabaseContract) *AuthRepository {
-	return &AuthRepository{database: database}
+func NewAuthRepository(database thirdparty_contract.DatabaseContract) *authRepository {
+	return &authRepository{
+		database: database,
+	}
 }
 
-func (lr *AuthRepository) FindUser(email string) (entity.User, error) {
-	conn, err := lr.database.Connect()
+func (ar *authRepository) FindUser(email string) (entity.User, error) {
+	conn, err := ar.database.Connect()
 	if err != nil {
 		return nil, err
 	}

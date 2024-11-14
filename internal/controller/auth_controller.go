@@ -1,23 +1,25 @@
-package auth
+package controller
 
 import (
+	"net/http"
+
 	"github.com/BrunoPolaski/go-chat-app/internal/controller/request"
-	"github.com/BrunoPolaski/go-chat-app/internal/service"
+	"github.com/BrunoPolaski/go-chat-app/internal/domain/service"
 	"github.com/BrunoPolaski/go-chat-app/pkg/utility"
 	"github.com/gin-gonic/gin"
 )
 
-type AuthController struct {
+type authController struct {
 	authService service.AuthService
 }
 
-func NewAuthController(authService service.AuthService) AuthController {
-	return AuthController{
+func NewAuthController(authService service.AuthService) authController {
+	return authController{
 		authService: authService,
 	}
 }
 
-func (lc *AuthController) SignIn(c *gin.Context) {
+func (lc *authController) SignIn(c *gin.Context) {
 	var user request.LoginRequest
 	var ok bool
 	if user.Username, user.Password, ok = c.Request.BasicAuth(); !ok {
@@ -32,5 +34,10 @@ func (lc *AuthController) SignIn(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"accessToken": token})
+	c.JSON(
+		http.StatusOK,
+		gin.H{
+			"accessToken": token,
+		},
+	)
 }

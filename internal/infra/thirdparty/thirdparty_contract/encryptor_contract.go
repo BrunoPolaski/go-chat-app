@@ -1,4 +1,4 @@
-package contract
+package thirdparty_contract
 
 type EncryptorContract interface {
 	GenerateFromPassword(password []byte, cost int) ([]byte, error)

@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/BrunoPolaski/go-chat-app/api"
-	"github.com/BrunoPolaski/go-chat-app/internal/thirdparty/logger"
+	"github.com/BrunoPolaski/go-chat-app/internal/infra/thirdparty/logger"
 	"github.com/gin-gonic/gin"
 )
 

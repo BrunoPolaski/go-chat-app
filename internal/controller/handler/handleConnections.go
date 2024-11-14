@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/BrunoPolaski/go-chat-app/internal/domain/entity"
-	"github.com/BrunoPolaski/go-chat-app/internal/thirdparty/contract"
+	entity "github.com/BrunoPolaski/go-chat-app/internal/domain/entity/http"
+	"github.com/BrunoPolaski/go-chat-app/internal/infra/thirdparty/thirdparty_contract"
 )
 
 type HandleConnections struct {
-	logger         contract.LoggerContract
+	logger         thirdparty_contract.LoggerContract
 	handleMessages HandleMessages
 }
 
-func NewHandleConnections(logger contract.LoggerContract, handleMessages HandleMessages) HandleConnections {
+func NewHandleConnections(logger thirdparty_contract.LoggerContract, handleMessages HandleMessages) HandleConnections {
 	return HandleConnections{
 		logger:         logger,
 		handleMessages: handleMessages,

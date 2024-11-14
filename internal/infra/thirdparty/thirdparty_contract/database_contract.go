@@ -1,4 +1,4 @@
-package contract
+package thirdparty_contract
 
 import "database/sql"
 
